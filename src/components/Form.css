@@ -1,0 +1,29 @@
+main {
+  background-color: rgba(79, 109, 153, 0.666);
+  display: flex;
+  margin: 30px;
+  border: 1px solid rgba(167, 167, 167, 0.534);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.btn {
+  margin: 5px;
+  width: 80px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: row;
+}
+
+.table1 {
+  border-radius: 7px;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+}
+
+.table {
+  border-radius: 7px;
+  color: red;
+}
