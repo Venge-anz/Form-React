@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./Form.css";
 import { useForm } from "react-hook-form";
 
@@ -12,13 +12,11 @@ export function Register() {
   } = useForm();
 
   const [data, setData] = useState([]);
+  const form = useRef(); //para resetear
 
-  const onSubmit = (data) => {
-    handleEnviar(data);
-  };
-
-  const handleEnviar = (formData) => {
-    setData((prevData) => [...prevData, formData]);
+  const onSubmit = (formData) => {
+    setData((data) => [...data, formData]);
+    form.current?.reset(); //para resetear
   };
 
   ////////////////////////////////////////
@@ -30,7 +28,7 @@ export function Register() {
   return (
     <>
       <main>
-        <form onSubmit={handleSubmit(onSubmit)} className="row g-3">
+        <form ref={form} onSubmit={handleSubmit(onSubmit)} className="row g-3">
           {/* Nombre */}
           <div className="col-md-4">
             <label className="form-label">Nombre</label>
