@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Form.css";
 import { useForm } from "react-hook-form";
 
@@ -10,8 +11,20 @@ export function Register() {
     formState: { errors },
   } = useForm();
 
+  const [data, setData] = useState([]);
+
   const onSubmit = (data) => {
-    console.log(data);
+    handleEnviar(data);
+  };
+
+  const handleEnviar = (formData) => {
+    setData((prevData) => [...prevData, formData]);
+  };
+
+  ////////////////////////////////////////
+
+  const handleBorrar = () => {
+    setData(data.slice(0, -1));
   };
 
   return (
@@ -31,17 +44,17 @@ export function Register() {
             )}
           </div>
 
-          {/* Apellidos */}
+          {/* apellidos */}
           <div className="col-md-4">
             <label className="form-label">Apellidos</label>
             <input
               type="text"
-              {...register("Apellido", { required: mensajeError })}
+              {...register("apellidos", { required: mensajeError })}
               className="form-control"
             />
-            {errors.Apellido && (
+            {errors.apellidos && (
               <p style={{ color: "rgb(168, 29, 29)" }}>
-                {errors.Apellido.message}
+                {errors.apellidos.message}
               </p>
             )}
           </div>
@@ -132,6 +145,38 @@ export function Register() {
           </div>
         </form>
       </main>
+      <div>
+        {/* TABLAA */}
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Email</th>
+              <th scope="col">Ciudad</th>
+              <th scope="col">País</th>
+            </tr>
+          </thead>
+          <tbody className="table-group-divider">
+            {data.map((item, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{item.nombre}</td>
+                <td>{item.apellidos}</td>
+                <td>{item.email}@gmail.com</td>
+                <td>{item.ciudad}</td>
+                <td>{item.pais}</td>
+                <td>
+                  <button onClick={handleBorrar} className="btn btn-primary">
+                    Borrar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
