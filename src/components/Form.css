@@ -9,7 +9,7 @@ main {
 
 .btn {
   margin: 5px;
-  width: 80px;
+  width: 90px;
 }
 
 .input-group {
@@ -17,13 +17,7 @@ main {
   flex-direction: row;
 }
 
-.table1 {
-  border-radius: 7px;
-  background-color: rgb(255, 255, 255);
-  width: 100%;
-}
-
-.table {
-  border-radius: 7px;
-  color: red;
+div .table {
+  border: solid 1px rgba(128, 128, 128, 0.357);
+  margin: 30px;
 }

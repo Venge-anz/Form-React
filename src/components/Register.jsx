@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 import "./Form.css";
 import { useForm } from "react-hook-form";
 
@@ -8,16 +9,48 @@ export function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const [data, setData] = useState([]);
+  const [editIndex, setEditIndex] = useState(null); // Para guardar el índice del registro editado
+
+  const form = useRef(null); // Para resetear el formulario
+
+  const onSubmit = (formData) => {
+    if (editIndex !== null) {
+      // Si estamos editando, actualizamos el registro
+      setData((data) =>
+        data.map((item, index) =>
+          index === editIndex ? { ...formData } : item
+        )
+      );
+    } else {
+      // Si es un nuevo registro, lo añadimos
+      setData((data) => [...data, formData]);
+    }
+    form.current?.reset(); // Resetear el formulario
+    setEditIndex(null); // Limpiar el índice de edición
+  };
+
+  const handleBorrar = (index) => {
+    setData(data.filter((_, i) => i !== index)); // Elimina el elemento seleccionado
+  };
+
+  const handleEditar = (item, index) => {
+    setEditIndex(index); // Guardamos el índice del registro que estamos editando
+    setValue("nombre", item.nombre);
+    setValue("apellidos", item.apellidos);
+    setValue("email", item.email);
+    setValue("ciudad", item.ciudad);
+    setValue("pais", item.pais);
+    setValue("check", item.check);
   };
 
   return (
     <>
       <main>
-        <form onSubmit={handleSubmit(onSubmit)} className="row g-3">
+        <form ref={form} onSubmit={handleSubmit(onSubmit)} className="row g-3">
           {/* Nombre */}
           <div className="col-md-4">
             <label className="form-label">Nombre</label>
@@ -36,12 +69,12 @@ export function Register() {
             <label className="form-label">Apellidos</label>
             <input
               type="text"
-              {...register("Apellido", { required: mensajeError })}
+              {...register("apellidos", { required: mensajeError })}
               className="form-control"
             />
-            {errors.Apellido && (
+            {errors.apellidos && (
               <p style={{ color: "rgb(168, 29, 29)" }}>
-                {errors.Apellido.message}
+                {errors.apellidos.message}
               </p>
             )}
           </div>
@@ -127,11 +160,55 @@ export function Register() {
           {/* Botón de envío */}
           <div className="col-12">
             <button className="btn btn-primary" type="submit">
-              Enviar
+              {editIndex !== null ? "Actualizar" : "Enviar"}
             </button>
           </div>
         </form>
       </main>
+
+      {/* TABLA */}
+      <div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Email</th>
+              <th scope="col">Ciudad</th>
+              <th scope="col">País</th>
+            </tr>
+          </thead>
+          <tbody className="table-group-divider">
+            {data.map((item, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{item.nombre}</td>
+                <td>{item.apellidos}</td>
+                <td>{item.email}@gmail.com</td>
+                <td>{item.ciudad}</td>
+                <td>{item.pais}</td>
+                <td>
+                  <button
+                    onClick={() => handleBorrar(index)}
+                    className="btn btn-danger"
+                  >
+                    Borrar
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleEditar(item, index)}
+                    className="btn btn-warning"
+                  >
+                    Editar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
