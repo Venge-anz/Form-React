@@ -9,20 +9,42 @@ export function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   const [data, setData] = useState([]);
-  const form = useRef(); //para resetear
+  const [editIndex, setEditIndex] = useState(null); // Para guardar el índice del registro editado
+
+  const form = useRef(null); // Para resetear el formulario
 
   const onSubmit = (formData) => {
-    setData((data) => [...data, formData]);
-    form.current?.reset(); //para resetear
+    if (editIndex !== null) {
+      // Si estamos editando, actualizamos el registro
+      setData((data) =>
+        data.map((item, index) =>
+          index === editIndex ? { ...formData } : item
+        )
+      );
+    } else {
+      // Si es un nuevo registro, lo añadimos
+      setData((data) => [...data, formData]);
+    }
+    form.current?.reset(); // Resetear el formulario
+    setEditIndex(null); // Limpiar el índice de edición
   };
 
-  ////////////////////////////////////////
+  const handleBorrar = (index) => {
+    setData(data.filter((_, i) => i !== index)); // Elimina el elemento seleccionado
+  };
 
-  const handleBorrar = () => {
-    setData(data.slice(0, -1));
+  const handleEditar = (item, index) => {
+    setEditIndex(index); // Guardamos el índice del registro que estamos editando
+    setValue("nombre", item.nombre);
+    setValue("apellidos", item.apellidos);
+    setValue("email", item.email);
+    setValue("ciudad", item.ciudad);
+    setValue("pais", item.pais);
+    setValue("check", item.check);
   };
 
   return (
@@ -42,7 +64,7 @@ export function Register() {
             )}
           </div>
 
-          {/* apellidos */}
+          {/* Apellidos */}
           <div className="col-md-4">
             <label className="form-label">Apellidos</label>
             <input
@@ -138,13 +160,14 @@ export function Register() {
           {/* Botón de envío */}
           <div className="col-12">
             <button className="btn btn-primary" type="submit">
-              Enviar
+              {editIndex !== null ? "Actualizar" : "Enviar"}
             </button>
           </div>
         </form>
       </main>
+
+      {/* TABLA */}
       <div>
-        {/* TABLAA */}
         <table className="table">
           <thead>
             <tr>
@@ -166,8 +189,19 @@ export function Register() {
                 <td>{item.ciudad}</td>
                 <td>{item.pais}</td>
                 <td>
-                  <button onClick={handleBorrar} className="btn btn-primary">
+                  <button
+                    onClick={() => handleBorrar(index)}
+                    className="btn btn-danger"
+                  >
                     Borrar
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleEditar(item, index)}
+                    className="btn btn-warning"
+                  >
+                    Editar
                   </button>
                 </td>
               </tr>
